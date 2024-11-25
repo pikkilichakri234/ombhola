@@ -1,0 +1,33 @@
+name: Deploy HTTPD Server
+
+on:
+  push:
+    branches:
+      - main  # Trigger the workflow on push to the main branch
+
+jobs:
+  deploy-httpd:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up the HTTP server
+      - name: Install and configure Apache HTTPD
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y apache2
+          sudo systemctl start apache2
+          sudo systemctl enable apache2
+
+      # Step 3: Deploy files to the web root
+      - name: Deploy files to HTTPD server
+        run: |
+          sudo rm -rf /var/www/html/*
+          sudo cp -r ./public/* /var/www/html/
+
+      # Step 4: Verify Deployment
+      - name: Verify HTTPD is running
+        run: curl -I http://localhost
