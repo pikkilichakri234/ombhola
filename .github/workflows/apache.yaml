@@ -1,0 +1,32 @@
+name: Setup HTTPD Server
+
+on:
+  push:
+    branches:
+      - main  # Run workflow on push to the main branch
+
+jobs:
+  httpd-setup:
+    runs-on: ubuntu-latest  # Use an Ubuntu runner
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout repository
+        uses: actions/checkout@v3  # Checkout the repository code
+
+      # Step 2: Install Apache (httpd)
+      - name: Install Apache HTTP Server
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y apache2
+
+      # Step 3: Configure Apache and Add Default Web Page
+      - name: Configure Apache and Add Default Page
+        run: |
+          echo "<html><body><h1>Welcome to GitHub Actions Apache Server</h1></body></html>" | sudo tee /var/www/html/index.html
+          sudo systemctl restart apache2
+
+      # Step 4: Verify Apache is Running
+      - name: Verify HTTPD Server
+        run: |
+          curl -I localhost
